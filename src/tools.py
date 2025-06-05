@@ -101,28 +101,24 @@ def get_puuid_from_discord(username: str) -> str:
     return PUUIDS.get(username)
 
 
-def get_latest_teammates_df(player_name: str) -> pd.DataFrame:
+def get_latest_teammates_df(puuid: str) -> list[dict]:
     """
-    Retrieves the latest match data for the given player and returns a DataFrame
-    of all teammates (including the player).
+    Retrieves the latest match data for the given player (by PUUID) and returns
+    a list of dictionaries representing teammates' performance in the most recent match.
 
     Parameters:
-    - api: Instance of RiotAPI
-    - player_name: Discord username mapped to a Riot PUUID
+    - puuid: The Riot PUUID of the player
     - queue_id: Match type queue (default is 450 for ARAM)
 
     Returns:
-    - Pandas DataFrame containing teammates' performance in the latest match
+    - List[dict]: List of teammate stats (including the player) as dictionaries
     """
     TOKEN = "RGAPI-a384a673-d288-42ec-a860-55a1602dba94"
     api = RiotAPI(TOKEN)
-    puuid = get_puuid_from_discord(player_name)
-    if not puuid:
-        raise ValueError(f"Username '{player_name}' not found.")
 
     match_ids = api.get_match_ids(puuid, no_games=1, queue_id=450)
     if not match_ids:
-        raise ValueError(f"No recent matches found for '{player_name}'.")
+        raise ValueError("No recent matches found for this PUUID.")
 
     match_data = api.get_match_data(match_ids[0])
     df = pd.json_normalize(match_data["info"]["participants"])
@@ -132,7 +128,6 @@ def get_latest_teammates_df(player_name: str) -> pd.DataFrame:
     if player_team_id.empty:
         raise ValueError("Player's team ID not found in match data.")
 
-    # return df[df["teamId"] == player_team_id.iloc[0]]
     required_columns = [
         "matchId",
         "riotIdGameName",

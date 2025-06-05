@@ -2,17 +2,17 @@
     {
         "type": "function",
         "name": "get_latest_teammates_df",
-        "description": "Retrieves a DataFrame of all teammates' performance from the latest match of a specified League of Legends player.",
+        "description": "Retrieves teammates' performance from the latest match using the player's Riot PUUID.",
         "parameters": {
             "type": "object",
             "properties": {
-                "player_name": {
+                "puuid": {
                     "type": "string",
-                    "description": "The Discord username mapped to the player's Riot PUUID."
+                    "description": "The Riot PUUID of the player."
                 }
             },
             "required": [
-                "player_name"
+                "puuid"
             ],
             "additionalProperties": false
         }
