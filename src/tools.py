@@ -148,11 +148,11 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
         "item0", "item1", "item2", "item3", "item4", "item5", "item6"
     ]
 
-    team_df = df[df["teamId"] == player_team_id.iloc[0]][required_columns]
+    team_df = df[required_columns]
     return team_df.to_dict(orient="records")
 
 
-def get_item_name(item_id: int, version: str = "15.11.1") -> str:
+def get_item_name(item_id: int) -> str:
     """
     Given an item ID, returns the corresponding item name from Riot's Data Dragon.
 
@@ -163,6 +163,8 @@ def get_item_name(item_id: int, version: str = "15.11.1") -> str:
     Returns:
         str: The name of the item, or 'Unknown Item' if not found.
     """
+    version = requests.get(
+        "https://ddragon.leagueoflegends.com/api/versions.json").json()[0]
     url = f"https://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/item.json"
     response = requests.get(url)
     response.raise_for_status()
