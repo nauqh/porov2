@@ -43,7 +43,19 @@ def get_puuid_from_discord(username: str) -> str:
     return PUUIDS.get(username)
 
 
-def get_latest_match_data(api: RiotAPI, player_name: str, queue_id=450) -> dict:
+def get_latest_teammates_df(api: RiotAPI, player_name: str, queue_id=450) -> pd.DataFrame:
+    """
+    Retrieves the latest match data for the given player and returns a DataFrame
+    of all teammates (including the player).
+
+    Parameters:
+    - api: Instance of RiotAPI
+    - player_name: Discord username mapped to a Riot PUUID
+    - queue_id: Match type queue (default is 450 for ARAM)
+
+    Returns:
+    - Pandas DataFrame containing teammates' performance in the latest match
+    """
     puuid = get_puuid_from_discord(player_name)
     if not puuid:
         raise ValueError(f"Username '{player_name}' not found.")
@@ -52,11 +64,7 @@ def get_latest_match_data(api: RiotAPI, player_name: str, queue_id=450) -> dict:
     if not match_ids:
         raise ValueError(f"No recent matches found for '{player_name}'.")
 
-    return api.get_match_data(match_ids[0])
-
-
-def extract_teammates_df(match_data: dict, player_name: str) -> pd.DataFrame:
-    puuid = get_puuid_from_discord(player_name)
+    match_data = api.get_match_data(match_ids[0])
     df = pd.json_normalize(match_data["info"]["participants"])
     df["matchId"] = match_data["metadata"]["matchId"]
 
@@ -71,9 +79,7 @@ if __name__ == "__main__":
     TOKEN = "RGAPI-a384a673-d288-42ec-a860-55a1602dba94"
     api = RiotAPI(TOKEN)
 
-    player = "tuandao1311"
-    match_data = get_latest_match_data(api, player)
-    teammates_df = extract_teammates_df(match_data, player)
+    data = get_latest_teammates_df(api, "nauqh")
 
-    print(teammates_df[["riotIdGameName",
+    print(data[["riotIdGameName",
           "championName", "kills", "deaths", "assists"]])
