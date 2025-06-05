@@ -5,6 +5,7 @@ from loguru import logger
 from tools import (
     get_latest_teammates_df,
     get_puuid_from_discord,
+    search_youtube
 )
 
 
@@ -31,7 +32,8 @@ class Assistant:
         self.tool_dispatch = {
             fn.__name__: fn for fn in (
                 get_latest_teammates_df,
-                get_puuid_from_discord
+                get_puuid_from_discord,
+                search_youtube
             )
         }
 

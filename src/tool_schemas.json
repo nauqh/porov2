@@ -34,5 +34,27 @@
             ],
             "additionalProperties": false
         }
+    },
+    {
+        "type": "function",
+        "name": "search_youtube",
+        "description": "Searches for relevant YouTube videos based on a query.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "The search query for finding relevant YouTube videos."
+                },
+                "max_results": {
+                    "type": "integer",
+                    "description": "Maximum number of video URLs to return."
+                }
+            },
+            "required": [
+                "query"
+            ],
+            "additionalProperties": false
+        }
     }
 ]
