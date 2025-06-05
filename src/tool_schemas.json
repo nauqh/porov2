@@ -56,5 +56,27 @@
             ],
             "additionalProperties": false
         }
+    },
+    {
+        "type": "function",
+        "name": "get_item_name",
+        "description": "Returns the item name for a given League of Legends item ID from Riot's Data Dragon API.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "item_id": {
+                    "type": "integer",
+                    "description": "The numeric ID of the item (e.g. 1001 for Boots)."
+                },
+                "version": {
+                    "type": "string",
+                    "description": "The game version to use (default is '15.11.1')."
+                }
+            },
+            "required": [
+                "item_id"
+            ],
+            "additionalProperties": false
+        }
     }
 ]

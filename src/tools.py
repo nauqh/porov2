@@ -131,34 +131,50 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
     required_columns = [
         "matchId",
         "riotIdGameName",
+        "championName",
+        "kills", "deaths", "assists",
+        "goldEarned",
         "totalDamageDealtToChampions",
         "totalDamageTaken",
         "totalTimeCCDealt",
         "physicalDamageDealtToChampions",
         "magicDamageDealtToChampions",
-        "championName",
-        "kills",
-        "deaths",
-        "assists",
-        "challenges.killParticipation",
-        "firstBloodKill",
-        "firstBloodAssist",
-        "firstTowerKill",
-        "firstTowerAssist",
-        "goldEarned",
-        "totalHealsOnTeammates",
         "trueDamageDealtToChampions",
-        "win",
-        "teamId",
-        "puuid"
+        "challenges.killParticipation",
+        "firstBloodKill", "firstBloodAssist",
+        "firstTowerKill", "firstTowerAssist",
+        "totalHealsOnTeammates",
+        "win", "teamId", "puuid",
+        "item0", "item1", "item2", "item3", "item4", "item5", "item6"
     ]
 
     team_df = df[df["teamId"] == player_team_id.iloc[0]][required_columns]
     return team_df.to_dict(orient="records")
 
 
-if __name__ == "__main__":
-    data = get_latest_teammates_df("nauqh")
+def get_item_name(item_id: int, version: str = "15.11.1") -> str:
+    """
+    Given an item ID, returns the corresponding item name from Riot's Data Dragon.
 
-    print(data[["riotIdGameName",
-          "championName", "kills", "deaths", "assists", "puuid"]])
+    Args:
+        item_id (int): The item ID (e.g. 1001).
+        version (str): The patch version to use (default "15.11.1").
+
+    Returns:
+        str: The name of the item, or 'Unknown Item' if not found.
+    """
+    url = f"https://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/item.json"
+    response = requests.get(url)
+    response.raise_for_status()
+    data = response.json()["data"]
+
+    return data.get(str(item_id), {}).get("name", "Unknown Item")
+
+
+if __name__ == "__main__":
+    puuid = get_puuid_from_discord("nauqh")
+    data = get_latest_teammates_df(puuid)
+
+    get_item_name(3032)
+
+    print(data)

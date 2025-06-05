@@ -5,6 +5,7 @@ from loguru import logger
 from tools import (
     get_latest_teammates_df,
     get_puuid_from_discord,
+    get_item_name,
     search_youtube
 )
 from dotenv import load_dotenv
@@ -36,6 +37,7 @@ class Assistant:
             fn.__name__: fn for fn in (
                 get_latest_teammates_df,
                 get_puuid_from_discord,
+                get_item_name,
                 search_youtube
             )
         }
