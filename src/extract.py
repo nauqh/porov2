@@ -43,7 +43,7 @@ def get_puuid_from_discord(username: str) -> str:
     return PUUIDS.get(username)
 
 
-def get_latest_teammates_df(api: RiotAPI, player_name: str, queue_id=450) -> pd.DataFrame:
+def get_latest_teammates_df(player_name: str) -> pd.DataFrame:
     """
     Retrieves the latest match data for the given player and returns a DataFrame
     of all teammates (including the player).
@@ -56,11 +56,13 @@ def get_latest_teammates_df(api: RiotAPI, player_name: str, queue_id=450) -> pd.
     Returns:
     - Pandas DataFrame containing teammates' performance in the latest match
     """
+    TOKEN = "RGAPI-a384a673-d288-42ec-a860-55a1602dba94"
+    api = RiotAPI(TOKEN)
     puuid = get_puuid_from_discord(player_name)
     if not puuid:
         raise ValueError(f"Username '{player_name}' not found.")
 
-    match_ids = api.get_match_ids(puuid, no_games=1, queue_id=queue_id)
+    match_ids = api.get_match_ids(puuid, no_games=1, queue_id=450)
     if not match_ids:
         raise ValueError(f"No recent matches found for '{player_name}'.")
 
