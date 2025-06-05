@@ -3,12 +3,8 @@ from openai import OpenAI
 from loguru import logger
 
 from tools import (
-    fetch_all_code_from_repo,
-    search_db,
-    extract_owner,
-    extract_repo,
-    get_ta_role_for_forum,
-    search_youtube
+    get_latest_teammates_df,
+    get_puuid_from_discord,
 )
 
 
@@ -24,7 +20,6 @@ class Assistant:
         self.session_id = session_id
         self.model = model
 
-        # Load tools and instructions
         with open(tool_schema_path, 'r', encoding='utf-8') as f:
             self.tools = json.load(f)
         with open(instructions_path, 'r', encoding='utf-8') as f:
@@ -33,15 +28,10 @@ class Assistant:
         self.history = [{"role": "system", "content": instr}]
         self.previous_response_id = None
 
-        # Tool dispatcher
         self.tool_dispatch = {
             fn.__name__: fn for fn in (
-                get_ta_role_for_forum,
-                extract_owner,
-                extract_repo,
-                fetch_all_code_from_repo,
-                search_db,
-                search_youtube,
+                get_latest_teammates_df,
+                get_puuid_from_discord
             )
         }
 
@@ -103,7 +93,7 @@ class ConversationManager:
 
 if __name__ == '__main__':
     mgr = ConversationManager()
-    print("Usage: conv_id Your text here")
+    print("Usage: conv_id username Your question here")
 
     while True:
         line = input().strip()
@@ -111,15 +101,20 @@ if __name__ == '__main__':
             break
 
         parts = line.split()
-        conv_id = parts[0]
-
-        if conv_id == 'reset' and len(parts) == 2:
-            mgr.end_conversation(parts[1])
-            print(f"Session '{parts[1]}' reset.")
+        if len(parts) < 3:
+            print("Invalid input. Usage: conv_id username question...")
             continue
 
-        text = ' '.join(parts[1:])
-        print("Text:", text)
+        conv_id = parts[0]
+        username = parts[1]
+        message = ' '.join(parts[2:])
+        text = f"Username: {username}\n{message}"
 
+        if conv_id == 'reset':
+            mgr.end_conversation(username)
+            print(f"Session '{username}' reset.")
+            continue
+
+        print("Text:", text)
         reply = mgr.handle_message(conv_id, text)
         print(f"[{conv_id}] {reply}")

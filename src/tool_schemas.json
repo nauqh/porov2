@@ -16,5 +16,23 @@
             ],
             "additionalProperties": false
         }
+    },
+    {
+        "type": "function",
+        "name": "get_puuid_from_discord",
+        "description": "Looks up a player's Riot PUUID using their Discord username.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string",
+                    "description": "The Discord username of the player."
+                }
+            },
+            "required": [
+                "username"
+            ],
+            "additionalProperties": false
+        }
     }
 ]
