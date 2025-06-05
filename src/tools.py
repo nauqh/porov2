@@ -132,11 +132,38 @@ def get_latest_teammates_df(player_name: str) -> pd.DataFrame:
     if player_team_id.empty:
         raise ValueError("Player's team ID not found in match data.")
 
-    return df[df["teamId"] == player_team_id.iloc[0]]
+    # return df[df["teamId"] == player_team_id.iloc[0]]
+    required_columns = [
+        "matchId",
+        "riotIdGameName",
+        "totalDamageDealtToChampions",
+        "totalDamageTaken",
+        "totalTimeCCDealt",
+        "physicalDamageDealtToChampions",
+        "magicDamageDealtToChampions",
+        "championName",
+        "kills",
+        "deaths",
+        "assists",
+        "challenges.killParticipation",
+        "firstBloodKill",
+        "firstBloodAssist",
+        "firstTowerKill",
+        "firstTowerAssist",
+        "goldEarned",
+        "totalHealsOnTeammates",
+        "trueDamageDealtToChampions",
+        "win",
+        "teamId",
+        "puuid"
+    ]
+
+    team_df = df[df["teamId"] == player_team_id.iloc[0]][required_columns]
+    return team_df.to_dict(orient="records")
 
 
 if __name__ == "__main__":
     data = get_latest_teammates_df("nauqh")
 
     print(data[["riotIdGameName",
-          "championName", "kills", "deaths", "assists"]])
+          "championName", "kills", "deaths", "assists", "puuid"]])

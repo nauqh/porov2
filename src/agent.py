@@ -4,8 +4,12 @@ from loguru import logger
 
 from tools import (
     get_latest_teammates_df,
+    get_puuid_from_discord,
     search_youtube
 )
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Assistant:
@@ -13,8 +17,8 @@ class Assistant:
         self,
         session_id: str,
         model: str = "gpt-4.1",
-        tool_schema_path: str = "tool_schemas.json",
-        instructions_path: str = "instructions.txt"
+        tool_schema_path: str = "src/tool_schemas.json",
+        instructions_path: str = "src/instructions.txt"
     ):
         self.client = OpenAI()
         self.session_id = session_id
@@ -31,6 +35,7 @@ class Assistant:
         self.tool_dispatch = {
             fn.__name__: fn for fn in (
                 get_latest_teammates_df,
+                get_puuid_from_discord,
                 search_youtube
             )
         }
@@ -110,11 +115,6 @@ if __name__ == '__main__':
         message = ' '.join(parts[2:])
         text = f"Username: {username}\n{message}"
 
-        if conv_id == 'reset':
-            mgr.end_conversation(username)
-            print(f"Session '{username}' reset.")
-            continue
-
-        print("Text:", text)
+        # print(f"Username: {username}\nMessage: {message}")
         reply = mgr.handle_message(conv_id, text)
         print(f"[{conv_id}] {reply}")
