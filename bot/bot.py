@@ -1,26 +1,27 @@
-import bot
 import hikari
 import lightbulb
 from dotenv import load_dotenv
 import os
 
+# Load environment variables
 load_dotenv()
 
-app = lightbulb.BotApp(
-    os.getenv("TOKEN"),
-    intents=hikari.Intents.ALL,
-    default_enabled_guilds=[int(os.getenv("GUILD_ID"))],
-    help_slash_command=True,
-    banner=None,
+# Create the base Hikari bot
+bot = hikari.GatewayBot(os.getenv("TOKEN"))
+# Create the Lightbulb client from the bot
+client = lightbulb.client_from_app(bot)
+
+# Optional: Subscribe to start the client when the bot starts
+bot.subscribe(hikari.StartingEvent, client.start)
+
+# Load all extensions in your bot/extensions folder
+client.load_extensions("./bot/extensions")
+
+# Run the bot (blocking)
+bot.run(
+    status=hikari.Status.ONLINE,
+    activity=hikari.Activity(
+        name="v1.0.0",  # Replace or dynamically load your version here
+        type=hikari.ActivityType.LISTENING,
+    ),
 )
-
-app.load_extensions_from("./bot/extensions", must_exist=True)
-
-
-def run() -> None:
-    app.run(
-        activity=hikari.Activity(
-            name=f"v{bot.__version__}",
-            type=hikari.ActivityType.LISTENING,
-        )
-    )
