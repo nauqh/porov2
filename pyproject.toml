@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "hikari>=2.3.3",
+    "hikari-lightbulb>=3.0.0",
     "loguru>=0.7.3",
     "openai>=1.84.0",
     "pandas>=2.3.0",
