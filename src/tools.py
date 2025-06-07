@@ -3,6 +3,10 @@ import time
 import pandas as pd
 import re
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def search_youtube(query, max_results=5):
@@ -113,7 +117,7 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
     Returns:
     - List[dict]: List of teammate stats (including the player) as dictionaries
     """
-    TOKEN = "RGAPI-a384a673-d288-42ec-a860-55a1602dba94"
+    TOKEN = os.environ["RIOT_TOKEN"]
     api = RiotAPI(TOKEN)
 
     match_ids = api.get_match_ids(puuid, no_games=1, queue_id=450)
