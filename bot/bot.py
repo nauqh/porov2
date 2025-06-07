@@ -2,12 +2,17 @@ import hikari
 import lightbulb
 from dotenv import load_dotenv
 import os
+from src.agent import ConversationManager
+
 
 # Load environment variables
 load_dotenv()
 
 bot = hikari.GatewayBot(os.getenv("TOKEN"))
 client = lightbulb.client_from_app(bot)
+client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
+    ConversationManager, lambda: ConversationManager()
+)
 
 
 @bot.listen(hikari.StartingEvent)
