@@ -7,40 +7,32 @@ loader = lightbulb.Loader()
 
 
 @loader.listener(hikari.GuildMessageCreateEvent)
-async def on_message_create(
-    event: hikari.GuildMessageCreateEvent,
-    agent: ConversationManager
-) -> None:
+async def on_message_create(event, agent: ConversationManager) -> None:
     message = event.message
 
     if message.author.is_bot:
         return
 
-    bot = await event.app.rest.fetch_my_user()
-    if bot.id not in message.user_mentions_ids:
+    bot_id = (await event.app.rest.fetch_my_user()).id
+    if bot_id not in message.user_mentions_ids:
         return
 
-    content = message.content.replace(f"<@{bot.id}>", "").strip()
+    content = message.content.replace(f"<@{bot_id}>", "").strip()
     username = message.author.username
 
-    # Create a thread for this message
-    thread = await event.app.rest.create_message_thread(
-        message.channel_id,
-        message.id,
-        f"Conversation with {username}",
-    )
-
-    # Use thread ID as session_id
-    conv_id = str(thread.id)
-    logger.info(f"Created new conversation: {conv_id}")
-
     try:
+        thread = await event.app.rest.create_message_thread(
+            message.channel_id,
+            message.id,
+            f"Conversation with {username}",
+        )
+        conv_id = str(thread.id)
+        logger.info(f"Created new conversation: {conv_id}")
+
         reply = agent.handle_message(
             conv_id, f"Username: {username}\n{content}")
-        await event.app.rest.create_message(
-            channel=thread.id,
-            content=reply
-        )
+        await event.app.rest.create_message(channel=thread.id, content=reply)
+
     except Exception as e:
         logger.exception(f"Error in thread-based reply: {e}")
         await event.app.rest.create_message(
