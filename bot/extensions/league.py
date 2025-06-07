@@ -62,11 +62,11 @@ async def on_thread_followup(event, agent: ConversationManager) -> None:
     bot_responses = sum(
         1 for msg in history if msg.author.id == bot.id)
 
-    if bot_responses >= 3:
+    if bot_responses >= 4:
         logger.info(f"Bot response limit reached in thread {conv_id}")
         await event.app.rest.create_message(
             channel=conv_id,
-            content="⚠️ This thread has reached the 4-response limit. Please start a new thread for further assistance."
+            content="This thread has reached the 4-response limit. Please start a new thread for further assistance."
         )
         return
 
