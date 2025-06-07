@@ -8,7 +8,10 @@ from src.agent import ConversationManager
 # Load environment variables
 load_dotenv()
 
-bot = hikari.GatewayBot(os.getenv("TOKEN"))
+bot = hikari.GatewayBot(
+    os.getenv("TOKEN"),
+    intents=hikari.Intents.ALL,
+)
 client = lightbulb.client_from_app(bot)
 client.di.registry_for(lightbulb.di.Contexts.DEFAULT).register_factory(
     ConversationManager, lambda: ConversationManager()
