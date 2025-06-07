@@ -55,7 +55,6 @@ You are **not allowed** to:
 
 <performance_evaluation_guidelines>
 To evaluate a player's performance, use a hidden impact score calculated as follows:
-
 1. Hidden Impact Metric:
 - Internally compute: (damage to champions) + (damage taken) + (crowd control score and healing/shielding)
 - Normalize each component to ensure balanced weighting across different roles.
