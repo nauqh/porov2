@@ -13,4 +13,4 @@ COPY . .
 RUN uv sync --locked
 
 # Run the bot
-CMD ["uv", "run", "-m", "bot.py"]
+CMD ["uv", "run", "-m", "bot"]
