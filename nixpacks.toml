@@ -5,4 +5,4 @@ nixPkgs = ["uv"]
 cmds = ["uv sync"]
 
 [start]
-cmd = "uv run -Om bot"
+cmd = "uv run -m bot"
