@@ -109,13 +109,14 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
     """
     Retrieves the latest match data for the given player (by PUUID) and returns
     a list of dictionaries representing teammates' performance in the most recent match.
+    Item IDs are automatically converted to item names.
 
     Parameters:
     - puuid: The Riot PUUID of the player
     - queue_id: Match type queue (default is 450 for ARAM)
 
     Returns:
-    - List[dict]: List of teammate stats (including the player) as dictionaries
+    - List[dict]: List of teammate stats (including the player) as dictionaries with item names
     """
     TOKEN = os.environ["RIOT_TOKEN"]
     api = RiotAPI(TOKEN)
@@ -153,6 +154,17 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
     ]
 
     team_df = df[required_columns]
+
+    # Convert item IDs to item names for all players
+    item_columns = ["item0", "item1", "item2",
+                    "item3", "item4", "item5", "item6"]
+
+    for item_col in item_columns:
+        team_df[item_col] = team_df[item_col].apply(
+            lambda item_id: get_item_name(
+                item_id) if item_id != 0 else "No Item"
+        )
+
     return team_df.to_dict(orient="records")
 
 
@@ -167,6 +179,9 @@ def get_item_name(item_id: int) -> str:
     Returns:
         str: The name of the item, or 'Unknown Item' if not found.
     """
+    if item_id == 0:
+        return "No Item"
+
     version = requests.get(
         "https://ddragon.leagueoflegends.com/api/versions.json").json()[0]
     url = f"https://ddragon.leagueoflegends.com/cdn/{version}/data/en_US/item.json"
