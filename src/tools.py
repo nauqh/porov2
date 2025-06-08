@@ -181,11 +181,12 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
 
         # Calculate Hidden Impact Score for each player in this team
         def calculate_hidden_impact_score(row):
-            # Weighted formula: Damage=1.5x, DamageTaken=1.5x, CC=1.0x, Healing=0.5x
+            # Weighted formula: Damage=3.0x, DamageTaken=1.0x, CC=1.0x, Healing=0.5x
             normalized_damage = (
-                row['totalDamageDealtToChampions'] / team_totals['damage']) * 5 * 1.5
+                row['totalDamageDealtToChampions'] / team_totals['damage']) * 5 * 3.0
             normalized_damage_taken = (
-                row['totalDamageTaken'] / team_totals['damageTaken']) * 5 * 1.5
+                row['totalDamageTaken'] / team_totals['damageTaken']) * 5 * 1.0
+            # 1.0x weight
             normalized_cc = min(
                 2.0, (row['totalTimeCCDealt'] / team_totals['ccTime']) * 5) * 1.0
             normalized_healing = min(
