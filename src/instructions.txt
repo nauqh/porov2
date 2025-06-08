@@ -154,11 +154,13 @@ This is the MOST IMPORTANT metric for ranking players. Calculate as follows:
    - Team total CC time = sum of all 5 teammates' crowd control time
    - Team total healing = sum of all 5 teammates' healing + shielding (use 1000 minimum if all are 0)
 
-2. **Calculate normalized scores for each player (multiply by 5 for intuitive scale):**
+2. **Calculate normalized scores for each player (multiply by 5 for intuitive scale, with caps to prevent extreme outliers):**
    - Normalized damage = (player's damage / team total damage) × 5
    - Normalized damage taken = (player's damage taken / team total damage taken) × 5
-   - Normalized CC = (player's CC time / team total CC time) × 5
-   - Normalized healing = (player's healing / team total healing) × 5
+   - Normalized CC = min(2.0, (player's CC time / team total CC time) × 5)
+   - Normalized healing = min(2.0, (player's healing / team total healing) × 5)
+   
+   Note: CC and healing are capped at 2.0 to prevent extreme outliers from dominating the score while still rewarding strong contributors significantly.
 
 3. **Calculate Hidden Impact Score:**
    Hidden Impact Score = Normalized Damage + Normalized Damage Taken + Normalized CC + Normalized Healing
