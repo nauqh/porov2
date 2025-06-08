@@ -153,7 +153,8 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
         "item0", "item1", "item2", "item3", "item4", "item5", "item6"
     ]
 
-    team_df = df[required_columns]
+    # Use .copy() to avoid SettingWithCopyWarning
+    team_df = df[required_columns].copy()
 
     # Convert item IDs to item names for all players
     item_columns = ["item0", "item1", "item2",
