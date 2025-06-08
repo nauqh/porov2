@@ -108,15 +108,16 @@ def get_puuid_from_discord(username: str) -> str:
 def get_latest_teammates_df(puuid: str) -> list[dict]:
     """
     Retrieves the latest match data for the given player (by PUUID) and returns
-    a list of dictionaries representing teammates' performance in the most recent match.
-    Item IDs are automatically converted to item names.
+    a list of dictionaries representing all players' performance in the most recent match.
+    Item IDs are automatically converted to item names and Hidden Impact Scores are calculated
+    for each team separately.
 
     Parameters:
     - puuid: The Riot PUUID of the player
     - queue_id: Match type queue (default is 450 for ARAM)
 
     Returns:
-    - List[dict]: List of teammate stats (including the player) as dictionaries with item names
+    - List[dict]: List of all 10 players' stats with item names and Hidden Impact Scores
     """
     TOKEN = os.environ["RIOT_TOKEN"]
     api = RiotAPI(TOKEN)
@@ -153,7 +154,6 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
         "item0", "item1", "item2", "item3", "item4", "item5", "item6"
     ]
 
-    # Use .copy() to avoid SettingWithCopyWarning
     team_df = df[required_columns].copy()
 
     # Convert item IDs to item names for all players
@@ -166,7 +166,55 @@ def get_latest_teammates_df(puuid: str) -> list[dict]:
                 item_id) if item_id != 0 else "No Item"
         )
 
-    return team_df.to_dict(orient="records")
+    # Calculate Hidden Impact Scores for each team separately
+    def calculate_team_hidden_scores(team_id):
+        team_players = team_df[team_df['teamId'] == team_id].copy()
+
+        # Calculate team totals for normalization
+        team_totals = {
+            'damage': team_players['totalDamageDealtToChampions'].sum(),
+            'damageTaken': team_players['totalDamageTaken'].sum(),
+            'ccTime': team_players['totalTimeCCDealt'].sum(),
+            # minimum 1000 for division
+            'healing': max(team_players['totalHealsOnTeammates'].sum(), 1000)
+        }
+
+        # Calculate Hidden Impact Score for each player in this team
+        def calculate_hidden_impact_score(row):
+            # Weighted formula: Damage=1.5x, DamageTaken=1.5x, CC=1.0x, Healing=0.5x
+            normalized_damage = (
+                row['totalDamageDealtToChampions'] / team_totals['damage']) * 5 * 1.5
+            normalized_damage_taken = (
+                row['totalDamageTaken'] / team_totals['damageTaken']) * 5 * 1.5
+            normalized_cc = min(
+                2.0, (row['totalTimeCCDealt'] / team_totals['ccTime']) * 5) * 1.0
+            normalized_healing = min(
+                1.0, (row['totalHealsOnTeammates'] / team_totals['healing']) * 5) * 0.5
+
+            return normalized_damage + normalized_damage_taken + normalized_cc + normalized_healing
+
+        team_players['hiddenImpactScore'] = team_players.apply(
+            calculate_hidden_impact_score, axis=1)
+        return team_players
+
+    # Process both teams
+    team_100 = calculate_team_hidden_scores(100)
+    team_200 = calculate_team_hidden_scores(200)
+
+    # Combine both teams back together
+    final_df = pd.concat([team_100, team_200], ignore_index=True)
+
+    # Add a field to identify the target player's team
+    target_team_id = player_team_id.iloc[0]
+    final_df['isPlayerTeam'] = final_df['teamId'] == target_team_id
+
+    # Sort by team (player's team first) and then by Hidden Impact Score within each team
+    final_df = final_df.sort_values(
+        ['isPlayerTeam', 'hiddenImpactScore'], ascending=[False, False])
+
+    final_df.to_csv("final_df.csv")
+
+    return final_df.to_dict(orient="records")
 
 
 def get_item_name(item_id: int) -> str:
