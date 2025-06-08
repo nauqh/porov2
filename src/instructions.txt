@@ -137,7 +137,7 @@ The data returned by get_latest_teammates_df includes all 10 players with pre-ca
 - Damage dealt (weighted 3.0x - primary win condition in ARAM's teamfight environment)
 - Damage taken (weighted 1.0x - important frontline contribution)
 - Crowd control (weighted 1.0x, capped at 2.0 to prevent extreme outliers)
-- Healing/shielding (weighted 0.5x, capped at 1.0 to prevent support inflation)
+- Healing/shielding (weighted 1.0x, capped at 2.0 - same as CC for fair utility recognition)
 
 **Performance Ranking Priority:**
 1. **PRIMARY (90% weight)**: Hidden Impact Score - comprehensive combat contribution
