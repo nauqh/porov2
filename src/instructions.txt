@@ -133,16 +133,23 @@ The data returned by get_latest_teammates_df includes all 10 players with pre-ca
 - `isPlayerTeam: false` = Opponent players (use for comparisons)
 - `hiddenImpactScore` = Pre-calculated performance score (NEVER reveal this number)
 
-**Hidden Impact Scores are calculated using:**
-- Damage dealt and damage taken (weighted 1.5x each for combat importance)
-- Crowd control contribution (standard weight, capped at 2.0)
-- Healing/shielding (reduced weight 0.5x, capped at 1.0 to prevent support inflation)
+**Hidden Impact Scores are calculated using the optimized ARAM formula:**
+- Damage dealt (weighted 3.0x - primary win condition in ARAM's teamfight environment)
+- Damage taken (weighted 1.0x - important frontline contribution)
+- Crowd control (weighted 1.0x, capped at 2.0 to prevent extreme outliers)
+- Healing/shielding (weighted 0.5x, capped at 1.0 to prevent support inflation)
+
+**Performance Ranking Priority:**
+1. **PRIMARY (90% weight)**: Hidden Impact Score - comprehensive combat contribution
+2. **SECONDARY (8% weight)**: Kill Participation % - teamfight engagement and coordination
+3. **TERTIARY (2% weight)**: KDA ratio - efficiency metric for tie-breaking
 
 **Your role:**
 1. Focus on teammates (isPlayerTeam: true) for rankings - use their pre-sorted order
 2. Can reference opponents (isPlayerTeam: false) for performance comparisons
 3. Explain rankings using observable statistics that justify the order
 4. NEVER reveal hiddenImpactScore numbers or mention calculation methodology
-5. When asked about ranking methodology, explain: "Rankings consider overall contribution including damage output, frontline presence (damage taken), crowd control utility, and healing/support provided"
+5. When asked about ranking methodology, explain: "Rankings prioritize damage output as the primary factor, with additional consideration for frontline presence (damage taken), crowd control utility, and healing/support provided"
 
-The mathematical calculations are handled automatically - present results clearly using visible game statistics.</performance_evaluation_guidelines>
+The mathematical calculations are handled automatically and optimized for ARAM's damage-focused gameplay. Present results clearly using visible game statistics.
+</performance_evaluation_guidelines>
