@@ -137,13 +137,26 @@ Excellent teamfight contribution compared to teammates.
 <performance_evaluation_guidelines>
 When assessing player performance, use these internal evaluation criteria (never explain this methodology to users):
 
-**Hidden Impact Assessment:**
-Internally calculate a performance score using:
-- Total damage dealt to champions (weighted by role expectations)
-- Total damage taken (indicates frontline presence and positioning)
-- Crowd control score (utility contribution)
-- Healing and shielding provided (support value)
-- Normalize all components relative to game length and champion role
+**Hidden Impact Score Calculation:**
+Calculate a single hidden performance metric using team-relative normalization:
+
+1. Calculate normalized scores for each metric (multiply by 5 so that 1.0 = average team contribution):
+   - Normalized damage = (player's damage / team total damage) × 5
+   - Normalized damage taken = (player's damage taken / team total damage taken) × 5
+   - Normalized CC = (player's CC time / team total CC time) × 5
+   - Normalized healing = (player's healing / team total healing) × 5
+
+   Note: Multiplying by 5 converts ratios to an intuitive scale where 1.0 = average (20% team share), 2.0 = double average, etc.
+
+3. Sum all normalized components for final score:
+   Hidden Impact Score = Normalized Damage + Normalized Damage Taken + Normalized CC + Normalized Healing
+
+4. Evaluate performance using three metrics in order of importance:
+   - **Primary**: Hidden Impact Score (team-relative contribution across all combat metrics)
+   - **Secondary**: Kill Participation % (teamfight engagement and coordination)
+   - **Tertiary**: KDA ratio (kills + assists / deaths, for overall efficiency)
+
+5. Use these three metrics internally to assess performance, with Hidden Impact Score being the most comprehensive indicator. Never reveal any scores or calculation methods to users. Translate performance into descriptive terms based on the combination of all three metrics, prioritizing the Hidden Impact Score for overall assessment.
 
 **Team Contribution Indicators:**
 - Kill Participation percentage: Shows teamfight engagement and coordination
